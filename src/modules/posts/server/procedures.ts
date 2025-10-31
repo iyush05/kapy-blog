@@ -117,7 +117,8 @@ export const postRouter = createTRPCRouter({
             })
             .returning()
             
-            const [addPostCategories] = await db
+            if (input.categories.length > 0) {
+                const [addPostCategories] = await db
                 .insert(postCategories)
                 .values(
                     input.categories.map((category) => ({
@@ -127,6 +128,7 @@ export const postRouter = createTRPCRouter({
                 )
                 .onConflictDoNothing()
                 .returning()
+            }
 
             return createPost;
         }
@@ -147,7 +149,8 @@ export const postRouter = createTRPCRouter({
                 .where(eq(posts.slug, input.slug))
                 .returning()
 
-            const [addPostCategories] = await db
+            if (input.categories.length > 0) {
+                const [addPostCategories] = await db
                 .insert(postCategories)
                 .values(
                     input.categories.map((category) => ({
@@ -157,6 +160,7 @@ export const postRouter = createTRPCRouter({
                 )
                 .onConflictDoNothing()
                 .returning()
+            }
             return updatePost;
     }),
     remove: protectedProcedure

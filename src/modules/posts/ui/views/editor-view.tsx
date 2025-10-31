@@ -9,6 +9,7 @@ import CategoryDialog from "../components/CategoryDialog";
 export const EditorView = ({ slug }: { slug: string }) => {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
+	const [imageUrl, setImageUrl] = useState(null);
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
     const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
 
@@ -56,7 +57,6 @@ export const EditorView = ({ slug }: { slug: string }) => {
             toast.error(error.message)
         }
     })
-    const createPostCategoryMutation = trpc.category.add.useMutation();
 	return (
 		<div className="h-screen p-4 max-w-3xl mx-auto flex flex-col gap-4 overflow-hidden">
 		  <input
@@ -68,7 +68,7 @@ export const EditorView = ({ slug }: { slug: string }) => {
 		  />
 
 		  <div className="flex-1 min-h-0 overflow-hidden">
-			<MarkdownEditor value={content} onChange={setContent} />
+			<MarkdownEditor value={content} onChange={setContent} setImageUrl={setImageUrl} />
 		  </div>
 
 		  <div>
@@ -97,10 +97,10 @@ export const EditorView = ({ slug }: { slug: string }) => {
 		  )}
 
 		<div className="flex gap-3 pt-1">
-		  <Button onClick={() => createMutation.mutate({ title, content, published: true, slug, categories: selectedCategories })}>
+		  <Button onClick={() => createMutation.mutate({ title, content, published: true, slug, categories: selectedCategories, coverImage: imageUrl })}>
 			Publish
 		</Button>
-		<Button variant="outline" onClick={() => saveMutation.mutate({ title, content, published: false, slug , categories: selectedCategories})}>Save as draft</Button>
+		<Button variant="outline" onClick={() => saveMutation.mutate({ title, content, published: false, slug , categories: selectedCategories, coverImage: imageUrl })}>Save as draft</Button>
         <div className="flex-1" />
 			<Button variant={"destructive"} onClick={() => removeMutation.mutate({ slug })}>Delete</Button>
 		</div>

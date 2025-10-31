@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react";
 interface Props {
   value: string;
   onChange: (v: string) => void;
+  setImageUrl: (v: string) => void;
 }
 
-export default function MarkdownEditor({ value, onChange }: Props) {
+export default function MarkdownEditor({ value, onChange, setImageUrl }: Props) {
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isBoldActive, setIsBoldActive] = useState(false);
@@ -70,10 +71,24 @@ export default function MarkdownEditor({ value, onChange }: Props) {
   }, [value]);
 
   const handleImageUpload = async (file: File) => {
+    const cloudName = process.env.NEXT_PUBLIC_CLOUD_NAME
+    const uploadPreset = process.env.NEXT_PUBLIC_UPLOAD_PRESET
     const form = new FormData();
     form.append("file", file);
-    const res = await fetch("/api/upload", { method: "POST", body: form });
-    const { url } = await res.json();
+    form.append("upload_preset", uploadPreset!); 
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      { 
+        method: "POST", 
+        body: form 
+      }
+    );
+    
+    const data = await res.json();
+    const url = data.secure_url; 
+    setImageUrl(url);
+    
     exec("insertImage", url);
     const html = editorRef.current?.innerHTML ?? value;
     onChange(html);
