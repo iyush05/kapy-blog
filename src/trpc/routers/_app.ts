@@ -1,20 +1,12 @@
-import { z } from "zod";
-import { baseProcedure, createTRPCRouter } from "../init";
+import { createTRPCRouter } from "../init";
 import { authRouter } from "@/modules/auth/server/procedures";
+import { postRouter } from "@/modules/posts/server/procedures";
+import { categoriesRouter } from "@/modules/categories/server/procedures";
 
 export const appRouter = createTRPCRouter({
-  hello: baseProcedure
-    .input(
-      z.object({
-        text: z.string(),
-      })
-    )
-    .query(async (opts) => {
-      return {
-        greeting: `hello ${opts.input.text}`,
-      };
-    }),
-    auth: authRouter
+    auth: authRouter,
+    post: postRouter,
+    category: categoriesRouter,
 });
 
 export type AppRouter = typeof appRouter;

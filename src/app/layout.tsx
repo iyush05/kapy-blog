@@ -1,4 +1,5 @@
 import { TRPCProvider } from '@/trpc/react'
+import { Toaster } from '@/components/ui/sonner'
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -31,6 +32,7 @@ export default async function RootLayout({
         <TRPCProvider>
           {children}
         </TRPCProvider>
+        <Toaster richColors closeButton />
       </body>
     </html>
   );
