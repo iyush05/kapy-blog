@@ -9,7 +9,7 @@ import CategoryDialog from "../components/CategoryDialog";
 export const EditorView = ({ slug }: { slug: string }) => {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
-	const [imageUrl, setImageUrl] = useState(null);
+	const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
     const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
 
