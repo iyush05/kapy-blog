@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 interface Props {
   value: string;
   onChange: (v: string) => void;
-  setImageUrl: (v: string) => void;
+  setImageUrl: (v: string | null) => void;
 }
 
 export default function MarkdownEditor({ value, onChange, setImageUrl }: Props) {
