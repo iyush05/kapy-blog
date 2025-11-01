@@ -1,10 +1,10 @@
-import ClientGreetings from "../client-greetings";
+import { PostView } from "@/modules/posts/ui/views/post-view";
 
 const Page = async() => {
     
     return (
         <div>
-            <ClientGreetings />
+            <PostView />
         </div>
     )
 }

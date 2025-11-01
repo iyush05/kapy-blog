@@ -1,10 +1,10 @@
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { postDeleteSchema, postInsertSchema } from "../schemas";
 import { db } from "@/db";
-import { categories, postCategories, posts } from "@/db/schema";
+import { categories, postCategories, posts, usersTable } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 
 export const postRouter = createTRPCRouter({
     create: protectedProcedure
@@ -36,17 +36,6 @@ export const postRouter = createTRPCRouter({
                 })
                 .returning()
                 
-                // if (createPost.categories!.length > 0) {
-                //     const [addPostCategories] = await db
-                //     .insert(postCategories)
-                //     .values(
-                //         createPost.categories.map((category: number) => ({
-                //             slug: createPost.slug,
-                //             category_id: category
-                //         }))
-                //     )
-                //     .returning()
-                // }
                 const [addPostCategories] = await db
                     .insert(postCategories)
                     .values(
@@ -190,5 +179,55 @@ export const postRouter = createTRPCRouter({
                     )
                 )
                 .returning()
-        })
+        }),
+        getAll: protectedProcedure
+            .input(
+                z.object({
+                    page: z.number().default(1),
+                    limit: z.number().default(10),
+                })
+            )
+            .query(async ({ input }) => {
+                const { page, limit } = input;
+
+                const offset = (page - 1) * limit;
+
+                const publishedPosts = await db
+                    .select({
+                        id: posts.id,
+                        title: posts.title,
+                        content: posts.content,
+                        coverImage: posts.coverImage,
+                        published: posts.published,
+                        slug: posts.slug,
+                        createdAt: posts.createdAt,
+                        updatedAt: posts.updatedAt,
+                        categories: posts.categories,
+                        author: {
+                            id: usersTable.id,
+                            name: usersTable.name,
+                            email: usersTable.email,
+                        },
+                    })
+                    .from(posts)
+                    .where(eq(posts.published, true))
+                    .innerJoin(usersTable, eq(posts.authorId, usersTable.id))
+                    .limit(limit)
+                    .offset(offset);
+                
+                const totalCountResult = await db
+                    .select({ count: sql<number>`count(*)` })
+                    .from(posts)
+                    .where(eq(posts.published, true));
+                
+                const totalCount = totalCountResult[0]?.count ?? 0;
+
+                return {
+                    data: publishedPosts,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(totalCount / limit),
+                    totalCount,
+                }
+            })
 })
