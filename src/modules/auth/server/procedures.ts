@@ -34,7 +34,8 @@ export const authRouter = createTRPCRouter({
 
                 const token = jwt.sign(
                     { id: createUser.id,
-                        name: createUser.name
+                        name: createUser.name,
+                        username: createUser.username,
                      },
                     JWT_SECRET,
                     { expiresIn: "7d"}
@@ -78,7 +79,8 @@ export const authRouter = createTRPCRouter({
                 const token = jwt.sign(
                     {
                         id: user[0].id,
-                        name: user[0].name
+                        name: user[0].name,
+                        username: user[0].username,
                     },
                     JWT_SECRET,
                     { expiresIn: "7d"}
