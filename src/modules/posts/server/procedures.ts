@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { categories, postCategories, posts, usersTable } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, desc } from "drizzle-orm";
 
 export const postRouter = createTRPCRouter({
     create: protectedProcedure
@@ -229,5 +229,35 @@ export const postRouter = createTRPCRouter({
                     totalPages: Math.ceil(totalCount / limit),
                     totalCount,
                 }
-            })
+            }),
+        getRecent: protectedProcedure
+            .query(async () => {
+
+                const publishedPosts = await db
+                    .select({
+                        id: posts.id,
+                        title: posts.title,
+                        content: posts.content,
+                        coverImage: posts.coverImage,
+                        published: posts.published,
+                        slug: posts.slug,
+                        createdAt: posts.createdAt,
+                        updatedAt: posts.updatedAt,
+                        categories: posts.categories,
+                        author: {
+                            id: usersTable.id,
+                            name: usersTable.name,
+                            email: usersTable.email,
+                        },
+                    })
+                    .from(posts)
+                    .where(eq(posts.published, true))
+                    .innerJoin(usersTable, eq(posts.authorId, usersTable.id))
+                    .orderBy(desc(posts.updatedAt))
+                    .limit(3)
+
+                return {
+                    data: publishedPosts,
+                }
+            }),
 })
