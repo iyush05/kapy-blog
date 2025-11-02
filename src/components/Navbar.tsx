@@ -1,16 +1,17 @@
 'use client';
 
-import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { PenSquare, BookOpen } from 'lucide-react';
 import Link from 'next/link';
-import { generateSlug } from '@/lib/generateSlug';
 import Image from 'next/image';
+import { AvatarDropdown } from './AvatarDropdown';
+// import { useRouter } from 'next/navigation';
+import { logout } from '@/lib/logout';
 
 export default function Navbar({ user, slug }: { user: any, slug: string }) {
+    // const router = useRouter();
     const name = user.name.charAt(0).toUpperCase();
-    
+    const profileUrl = `/u/${user.username}`;
   return (
     <nav className="bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,7 +23,7 @@ export default function Navbar({ user, slug }: { user: any, slug: string }) {
 
           <div className="hidden md:flex items-center space-x-4">
             <Button variant="ghost" asChild>
-              <Link href="/my-blogs">
+              <Link href={profileUrl}>
                 <BookOpen className="w-4 h-4 mr-2" />
                 My Blogs
               </Link>
@@ -35,12 +36,11 @@ export default function Navbar({ user, slug }: { user: any, slug: string }) {
             </Button>
           </div>
 
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="" />
-              <AvatarFallback>{name}</AvatarFallback>
-            </Avatar>
-          </Button>
+        <AvatarDropdown
+            name={name}
+            profileUrl={profileUrl} 
+            onLogout={async() => await logout()} 
+        />
         </div>
 
         <div className="md:hidden flex justify-center space-x-8 pb-3 border-t border-gray-200 mt-2 pt-3">

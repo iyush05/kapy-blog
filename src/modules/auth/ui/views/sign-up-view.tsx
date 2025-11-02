@@ -26,6 +26,7 @@ import { useState } from "react"
 
 const formSchema = z.object({
     name: z.string().min(2, {message: "Minimum length of name should be 2"}),
+    username: z.string().min(2, {message: "Minimum length of name should be 2"}),
     email: z.string().min(1, { message: "This field has to be filled"}).email("This is not a valid email."),
     password: z.string().min(5, { message: "Minimum password length should be 5."})
 })
@@ -52,6 +53,7 @@ export const SignUpView = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      username: "",
       email: "",
       password: ""
     },
@@ -99,6 +101,21 @@ export const SignUpView = () => {
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Dexter Morgan" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                                />
+                            </div>
+                            <div className="grid gap-3">
+                                <FormField
+                                control={form.control}
+                                name="username"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Username</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="iyush05" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                     </FormItem>
