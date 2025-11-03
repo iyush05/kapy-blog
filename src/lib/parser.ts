@@ -1,12 +1,22 @@
 
 export function parseBlogContent(htmlString: string): string {
     let cleaned = htmlString.replace(/<img[^>]*>/gi, '');
+
+    cleaned = cleaned
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/&amp;/gi, '&')
+        .replace(/&lt;/gi, '<')
+        .replace(/&gt;/gi, '>')
+        .replace(/&quot;/gi, '"')
+        .replace(/&#39;/gi, "'")
+        .replace(/&#(\d+);/gi, (_match, code) => String.fromCharCode(parseInt(code, 10)));
+
     const textOnly = cleaned.replace(/<[^>]*>/g, ' ');
 
     const normalized = textOnly
-      .replace(/\s+/g, ' ')
-      .trim();
-  
+        .replace(/\s+/g, ' ')
+        .trim();
+
     const words = normalized.split(' ').filter(word => word.length > 0);
     return words.join(' ');
 }

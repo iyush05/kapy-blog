@@ -18,7 +18,7 @@ export default function PostCard({ CardData, categories }: { CardData: any, cate
             categoryNames[i] = categories[i].name;
     }
     const content = parseBlogContent(CardData.content);
-    const startContent = content.split(" ").slice(0, 14).join(" ");
+    const startContent = content.split(" ").slice(0, 12).join(" ");
     const readTime = estimateReadingTime(content);
     const fallbackImage = `/cover-${Math.floor(Math.random() * 4 ) + 1}.jpg`;
     const badgeVariants = ["lightBlue", "lightGreen", "lightYellow", "lightRed", "lightPurple", "lightPink", 'lightOrange', "lightTeal", "lightGray"] as const;

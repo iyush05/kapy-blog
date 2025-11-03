@@ -1,6 +1,7 @@
 import { useState } from "react";
 import PostCard from "./PostCard";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 export default function AllPostCard({
   CardData,
@@ -9,6 +10,7 @@ export default function AllPostCard({
   CardData: any[];
   categories: any[];
 }) {
+        const router = useRouter();
         const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
         const getCategoryNames = (cardCategories: number[]) => {
@@ -66,6 +68,7 @@ export default function AllPostCard({
                         <div
                         key={index}
                         className="overflow-hidden hover:shadow-md transition-shadow w-fit rounded-2xl h-[400px]"
+                        onClick={() => router.push(`/post/${data.slug}`)}
                         >
                             <PostCard CardData={data} categories={categories} />
                         </div>
