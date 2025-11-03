@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getServerAuth();
   if (!user) redirect("/sign-up");
-  const slug = `create-post/${generateSlug()}`;
+  const slug = `/create-post/${generateSlug()}`;
   return <>
     <Navbar user={user} slug={slug}/>
     {children}
