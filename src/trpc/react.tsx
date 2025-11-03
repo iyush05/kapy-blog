@@ -6,11 +6,19 @@ import { httpBatchLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { PropsWithChildren, useState } from "react";
 import { makeQueryClient } from "./query-client";
+import { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from "./routers/_app";
 import superjson from "superjson";
 
-export const trpc = createTRPCReact<AppRouter>();
+export type RouterOutput = inferRouterOutputs<AppRouter>;
 
+export type PostData = RouterOutput["post"]["getAll"]["data"][number];
+export type CategoryData = RouterOutput["category"]["list"];
+export type ProfilePostData = RouterOutput["profile"]["getMany"][number];
+export type RecentPostData = RouterOutput["post"]["getRecent"];
+
+export const trpc = createTRPCReact<AppRouter>();
+const deployedUrl = process.env.NEXT_PUBLIC_DEPLOYED_URL;
 let clientQueryClientSingleton: QueryClient;
 function getQueryClient() {
   // For server create new client
@@ -20,7 +28,7 @@ function getQueryClient() {
 
 function getUrl() {
   // need to change for deploy url
-  return "http://localhost:3000/api/trpc";
+  return `${deployedUrl}/api/trpc`;
 }
 
 export function TRPCProvider(props: PropsWithChildren) {

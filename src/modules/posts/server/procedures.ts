@@ -19,7 +19,7 @@ export const postRouter = createTRPCRouter({
                 throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid auth payload" });
             }
 
-            const authorId = ( payload as { id: string }).id;
+            const authorId = ctx.auth.id;
             
             const [existingPost] = await db
                     .select()
@@ -32,7 +32,7 @@ export const postRouter = createTRPCRouter({
                 .insert(posts)
                 .values({
                     ...input,
-                    authorId: parseInt(authorId),
+                    authorId: authorId,
                 })
                 .returning()
                 
@@ -52,7 +52,7 @@ export const postRouter = createTRPCRouter({
                 return createPost;
             }
 
-            if (existingPost && existingPost.authorId !== parseInt(authorId)) {
+            if (existingPost && existingPost.authorId !== authorId) {
                 throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid auth payload" });
             }
 
@@ -88,13 +88,7 @@ export const postRouter = createTRPCRouter({
         slug: z.string(),
     }))
     .mutation(async ({ input, ctx }) => {
-        const payload = ctx.auth;
-
-        if (!payload) {
-            throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid auth payload" });
-        }
-
-        const authorId = ( payload as { id: string }).id;
+        const authorId = ctx.auth.id;
         
         const [existingPost] = await db
                 .select()
@@ -107,7 +101,7 @@ export const postRouter = createTRPCRouter({
             .insert(posts)
             .values({
                 ...input,
-                authorId: parseInt(authorId),
+                authorId: authorId,
             })
             .returning()
             
@@ -127,7 +121,7 @@ export const postRouter = createTRPCRouter({
             return createPost;
         }
 
-        if (existingPost && existingPost.authorId !== parseInt(authorId)) {
+        if (existingPost && existingPost.authorId !== authorId) {
             throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid auth payload" });
         }
 

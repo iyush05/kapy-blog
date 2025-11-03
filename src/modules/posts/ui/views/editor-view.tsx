@@ -17,7 +17,7 @@ export const EditorView = ({ slug }: { slug: string }) => {
 
     const { data: categoriesData } = trpc.category.list.useQuery();
     const categoryOptions = (categoriesData ?? []).map((c) => c.name);
-	const { data: postData, isLoading }  = trpc.post.getOne.useQuery({ slug });
+	const { data: postData }  = trpc.post.getOne.useQuery({ slug });
 	const post = Array.isArray(postData) ? postData?.[0] : postData;
 
 	  useEffect(() => {
@@ -53,6 +53,26 @@ export const EditorView = ({ slug }: { slug: string }) => {
             .map(name => categoryNameToId.get(name))
             .filter((id): id is number => id !== undefined);
         setSelectedCategories(ids);
+    };
+
+	const handlePublish = () => {
+        if (title.trim().length === 0) {
+            toast.error("Please enter a title before publishing.");
+            return; // Stop execution
+        }
+        if (content.trim().length === 0) {
+            toast.error("Please add some content before publishing.");
+            return; // Stop execution
+        }
+        createMutation.mutate({ title, content, published: true, slug, categories: selectedCategories, coverImage: imageUrl });
+    };
+
+	const handleSaveDraft = () => {
+        if (title.trim().length === 0) {
+            toast.error("Please enter a title before saving.");
+            return; // Stop execution
+        }
+        saveMutation.mutate({ title, content, published: false, slug , categories: selectedCategories, coverImage: imageUrl });
     };
 
     const createMutation = trpc.post.create.useMutation({
@@ -122,13 +142,28 @@ export const EditorView = ({ slug }: { slug: string }) => {
 		  )}
 
 		<div className="flex gap-3 pt-1">
-		  <Button onClick={() => createMutation.mutate({ title, content, published: true, slug, categories: selectedCategories, coverImage: imageUrl })}>
-			Publish
-		</Button>
-		<Button variant="outline" onClick={() => saveMutation.mutate({ title, content, published: false, slug , categories: selectedCategories, coverImage: imageUrl })}>Save as draft</Button>
-        <div className="flex-1" />
-			<Button variant={"destructive"} onClick={() => removeMutation.mutate({ slug })}>Delete</Button>
-		</div>
+			<Button 
+		  		onClick={handlePublish}
+				disabled={createMutation.isPending || saveMutation.isPending}
+		  	>
+				{createMutation.isPending ? "Publishing..." : "Publish"}
+		  	</Button>
+			<Button 
+				variant="outline"
+				onClick={handleSaveDraft}
+				disabled={saveMutation.isPending || createMutation.isPending}
+			>
+				{saveMutation.isPending ? "Saving..." : "Save as draft"}
+			</Button>
+        	<div className="flex-1" />
+				<Button 
+					variant={"destructive"} 
+					onClick={() => removeMutation.mutate({ slug })}
+					disabled={removeMutation.isPending}
+				>
+					{removeMutation.isPending ? "Deleting..." : "Delete"}
+				</Button>
+			</div>
 		</div>
 	)
 }
