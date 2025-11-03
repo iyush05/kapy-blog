@@ -1,12 +1,15 @@
 "use client";
 import { trpc } from "@/trpc/react";
 import MarkdownEditor from "../components/MarkdownEditor"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button"
 import CategoryDialog from "../components/CategoryDialog";
+import { useRouter } from "next/navigation";
+import Loader from "@/components/loader";
 
 export const EditorView = ({ slug }: { slug: string }) => {
+	const router = useRouter();
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -15,7 +18,27 @@ export const EditorView = ({ slug }: { slug: string }) => {
 
     const { data: categoriesData } = trpc.category.list.useQuery();
     const categoryOptions = (categoriesData ?? []).map((c) => c.name);
+	const { data: postData, isLoading }  = trpc.post.getOne.useQuery({ slug });
+	const post = Array.isArray(postData) ? postData?.[0] : postData;
 
+	  useEffect(() => {
+    	if (post?.content) {
+      		setContent(post.content);
+    	} else {
+      		setContent("");
+    	}
+		if (post?.title) {
+      		setTitle(post.title);
+    	} else {
+      		setTitle("");
+    	}
+		if (post?.categories) {
+      		setSelectedCategories(post.categories);
+    	} else {
+      		setSelectedCategories([]);
+    	}
+  }, [post]);
+  
     // Create a map to convert between names and IDs
     const categoryNameToId = new Map((categoriesData ?? []).map((c) => [c.name, c.id]));
     const categoryIdToName = new Map((categoriesData ?? []).map((c) => [c.id, c.name]));
@@ -36,6 +59,7 @@ export const EditorView = ({ slug }: { slug: string }) => {
     const createMutation = trpc.post.create.useMutation({
         onSuccess: () => {
             toast.success("Post created successfully");
+			router.push("/");
         },
         onError: (error) => {
             toast.error(error.message);
@@ -44,6 +68,7 @@ export const EditorView = ({ slug }: { slug: string }) => {
     const saveMutation = trpc.post.save.useMutation({
         onSuccess: () => {
             toast.success("Draft saved successfully");
+			router.push("/");
         },
         onError: (error) => {
             toast.error(error.message);
@@ -52,6 +77,7 @@ export const EditorView = ({ slug }: { slug: string }) => {
     const removeMutation = trpc.post.remove.useMutation({
         onSuccess: () => {
             toast.success("Post deleted successfully");
+			router.push("/");
         },
         onError: (error) => {
             toast.error(error.message)

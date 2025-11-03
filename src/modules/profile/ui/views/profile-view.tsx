@@ -3,10 +3,9 @@ import { trpc } from "@/trpc/react"
 import ProfileCard from "../component/ProfileCard"
 import PostCard from "@/modules/posts/ui/components/PostCard";
 import Loader from "@/components/loader";
-import AllPostCard from "@/modules/posts/ui/components/AllPost";
 
 export const ProfileView = () => {
-    const { data, isLoading, error } = trpc.profile.getMany.useQuery();
+    const { data, isLoading } = trpc.profile.getMany.useQuery();
     const categories  = trpc.category.list.useQuery();
     const totalPosts = data?.length;
     let parsedData

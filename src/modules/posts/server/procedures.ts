@@ -260,4 +260,17 @@ export const postRouter = createTRPCRouter({
                     data: publishedPosts,
                 }
             }),
+        getOne: protectedProcedure
+            .input(
+                z.object({
+                    slug: z.string(),
+                })
+            )
+            .query(async({ input }) => {
+                const postData = await db
+                    .select()
+                    .from(posts)
+                    .where(eq(posts.slug, input.slug))
+                return postData;
+            })
 })
