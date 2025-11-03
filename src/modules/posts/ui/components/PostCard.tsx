@@ -9,18 +9,18 @@ import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { estimateReadingTime, parseBlogContent } from "@/lib/parser"
 import { Timer } from 'lucide-react';
+import { CategoryData, PostData } from "@/trpc/react";
 
-export default function PostCard({ CardData, categories }: { CardData: any, categories: any }) {
-    const cardCategories = CardData.categories;
-    const categoryNames = [];
-    for (let i = 0; i < categories.length; i++) {
-        if (cardCategories.includes(categories[i].id))
-            categoryNames[i] = categories[i].name;
-    }
+export default function PostCard({ CardData, categories }: { CardData: PostData, categories: CategoryData }) {
+    const categoryMap = new Map(categories.map(c => [c.id, c.name]));
+    const categoryNames = (CardData.categories ?? [])
+        .map(id => categoryMap.get(id))
+        .filter(Boolean) as string[];
     const content = parseBlogContent(CardData.content);
     const startContent = content.split(" ").slice(0, 12).join(" ");
     const readTime = estimateReadingTime(content);
-    const fallbackImage = `/cover-${Math.floor(Math.random() * 4 ) + 1}.jpg`;
+    const imageIndex = (CardData.id % 4) + 1;
+    const fallbackImage = `/cover-${imageIndex}.jpg`;
     const badgeVariants = ["lightBlue", "lightGreen", "lightYellow", "lightRed", "lightPurple", "lightPink", 'lightOrange', "lightTeal", "lightGray"] as const;
     
     return (

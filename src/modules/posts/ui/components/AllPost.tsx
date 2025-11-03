@@ -2,13 +2,14 @@ import { useState } from "react";
 import PostCard from "./PostCard";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import { CategoryData, PostData } from "@/trpc/react";
 
 export default function AllPostCard({
   CardData,
   categories,
 }: {
-  CardData: any[];
-  categories: any[];
+  CardData: PostData[];
+  categories: CategoryData;
 }) {
         const router = useRouter();
         const [selectedCategory, setSelectedCategory] = useState<string | null>(null);

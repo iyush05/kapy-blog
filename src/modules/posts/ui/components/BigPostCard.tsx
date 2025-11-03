@@ -9,26 +9,23 @@ import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { estimateReadingTime, parseBlogContent } from "@/lib/parser"
 import { Timer } from 'lucide-react';
+import { CategoryData, PostData } from "@/trpc/react";
 
-const randomNum = Math.floor(Math.random() * 4) + 1;
-const fallbackImage = `/cover-${randomNum}.jpg`;
-
-export default function BigPostCard({ CardData, categories }: { CardData: any, categories: any }) {
-    const cardCategories = CardData.categories;
-    const categoryNames = [];
-
-    for (let i = 0; i < categories.length; i++) {
-        if (cardCategories.includes(categories[i].id))
-            categoryNames[i] = categories[i].name;
-    }
+export default function BigPostCard({ CardData, categories }: { CardData: PostData, categories: CategoryData }) {
+    const categoryMap = new Map(categories.map(c => [c.id, c.name]));
+    const categoryNames = (CardData.categories ?? [])
+        .map(id => categoryMap.get(id))
+        .filter(Boolean) as string[];
     
     const content = parseBlogContent(CardData.content);
     const startContent = content.split(" ").slice(0, 70).join(" ");
     const readTime = estimateReadingTime(content);
     const badgeVariants = ["lightBlue", "lightGreen", "lightYellow", "lightRed", "lightPurple", "lightPink", 'lightOrange', "lightTeal", "lightGray"] as const;
+    const imageIndex = (CardData.id % 4) + 1;
+    const fallbackImage = `/cover-${imageIndex}.jpg`;
 
     return (
-        <div className="px-3">
+        <div className="mx-4 md:mx-2">
             <Card className="w-full max-w-[850px] h-full hover:shadow-md px-4 sm:px-6 md:px-0">
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4 h-full">
                     <div className="col-span-3 h-full mt-0 md:mt-7">
