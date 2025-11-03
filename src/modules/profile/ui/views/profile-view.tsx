@@ -1,7 +1,7 @@
 "use client"
 import { trpc } from "@/trpc/react"
 import ProfileCard from "../component/ProfileCard"
-import PostCard from "@/modules/posts/ui/components/PostCard";
+import ProfilePostCard from "../component/ProfilePostCard";
 import Loader from "@/components/loader";
 
 export const ProfileView = () => {
@@ -31,10 +31,9 @@ export const ProfileView = () => {
             <div className="text-2xl font-semibold pl-2 md:pl-16 mb-4">Recent Post</div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
                 {data?.map((post, index) => (
-                <PostCard key={index} CardData={post} categories={categories.data} />
+                <ProfilePostCard key={index} CardData={post} categories={categories.data}/>
             ))}
             </div>
-            {/* <AllPostCard CardData={data} categories={categories.data}/> */}
         </>
     )
 }

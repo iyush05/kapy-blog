@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button"
 import CategoryDialog from "../components/CategoryDialog";
 import { useRouter } from "next/navigation";
-import Loader from "@/components/loader";
 
 export const EditorView = ({ slug }: { slug: string }) => {
 	const router = useRouter();

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { PenSquare, BookOpen } from 'lucide-react';
+import { PenSquare, BookOpen, House } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AvatarDropdown } from './AvatarDropdown';
@@ -22,6 +22,12 @@ export default function Navbar({ user, slug }: { user: any, slug: string }) {
           </Link>
 
           <div className="hidden md:flex items-center space-x-4">
+            <Button variant="ghost" asChild>
+              <Link href="/">
+                <House className="w-4 h-4 mr-2" />
+                  Home
+              </Link>
+            </Button>
             <Button variant="ghost" asChild>
               <Link href={profileUrl}>
                 <BookOpen className="w-4 h-4 mr-2" />
